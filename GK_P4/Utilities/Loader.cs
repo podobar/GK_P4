@@ -13,12 +13,13 @@ namespace GK_P4.Models
         private List<int> vaos = new List<int>();
         private List<int> vbos = new List<int>();
         private List<int> textures = new List<int>();
-        public RawModel LoadToVAO(float[] positions, float[] textureCoords, int[] indices)
+        public RawModel LoadToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indices)
         {
             int vaoID = createVAO();
             bindIndicesBuffer(indices);
             storeDataInAttributeList(0, 3, positions);
             storeDataInAttributeList(1, 2, textureCoords);
+            storeDataInAttributeList(2, 3, normals);
 
             unbindVAO();
             return new RawModel(vaoID, indices.Length);
