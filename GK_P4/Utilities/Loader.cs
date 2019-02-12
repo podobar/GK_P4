@@ -25,7 +25,6 @@ namespace GK_P4.Models
             return new RawModel(vaoID, indices.Length);
         }
         
-        //TO DO: check if everything is fine
         public int LoadTexture(string filePath)
         {
             Texture texture = new Texture();

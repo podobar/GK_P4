@@ -11,7 +11,6 @@ namespace GK_P4.Utilities
 {
     public class OBJLoader
     {
-
         public static RawModel LoadOBJModel(string file, Loader loader)
         {
             List<Vector3> vertices = new List<Vector3>();

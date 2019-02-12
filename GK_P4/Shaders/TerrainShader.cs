@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace GK_P4.Shaders
 {
-    public class StaticShader : ShaderProgram
+    public class TerrainShader : ShaderProgram
     {
-        private const string vFile = "Shaders/vertexShader.glsl";
-        private const string fFile = "Shaders/fragmentShader.glsl";
+        private const string vFile = "Shaders/terrainVertexShader.glsl";
+        private const string fFile = "Shaders/terrainFragmentShader.glsl";
         private int location_transformationMatrix;
         private int location_projectionMatrix;
         private int location_viewMatrix;
@@ -21,8 +21,7 @@ namespace GK_P4.Shaders
         private int location_lightColour;
         private int location_reflectivity;
         private int location_shineDamper;
-        private int location_fogColour;
-        public StaticShader() : base(vFile, fFile) { }
+        public TerrainShader() : base(vFile, fFile) { }
 
         protected override void Initialize(string vShader, string fShader)
         {
@@ -43,11 +42,6 @@ namespace GK_P4.Shaders
             location_lightColour = base.getUniformLocation("lightColour");
             location_reflectivity = base.getUniformLocation("reflectivity");
             location_shineDamper = base.getUniformLocation("shineDamper");
-            location_fogColour = base.getUniformLocation("fogColour");
-        }
-        public void LoadFogColour(float r, float g, float b)
-        {
-            base.LoadVector(location_fogColour, new Vector3(r, g, b));
         }
         public void LoadTransformationMatrix(Matrix4 matrix)
         {

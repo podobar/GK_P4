@@ -8,6 +8,7 @@ using GK_P4.Entities;
 using GK_P4.Lights;
 using GK_P4.Models;
 using GK_P4.Shaders;
+using GK_P4.Terrains;
 using GK_P4.UserInputHandlers;
 using GK_P4.Utilities;
 using OpenTK;
@@ -20,14 +21,13 @@ namespace GK_P4.RenderEngine
     public class Game : GameWindow
     {
         private Loader loader = new Loader();
-        private TexturedModel txtmodel;
-        //private Renderer renderer;
-        //private StaticShader shader;
         private MainRenderer renderer;
+        private List<Terrain> terrains = new List<Terrain>();
         private Camera camera;
         private KeyboardHandler keyboard = new KeyboardHandler();
-        private Light light = new Light(new Vector3(0, 0, -20), new Vector3(212f/255f, 175f/255f, 55f/255f));
-        Entity entity;
+        private Light light = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
+        private string ShadingMode = "Flat";
+
         List<Entity> entities = new List<Entity>();
         public Game()
             : base(
@@ -46,17 +46,16 @@ namespace GK_P4.RenderEngine
         {
             try
             {
-                //shader = new StaticShader();
-                //shader.LoadLight(light);
-                //renderer = new Renderer(shader);
-                camera = new Camera(new Vector3(0, 0, 0), 0, 0, 0, keyboard);
+                generateEntities();
+                generateTerrains();
+                camera = new StaticCamera(new Vector3(0, 40, 40), 40, 0, 0);
                 renderer = new MainRenderer();
             }
             catch(Exception ef)
             {
                 Console.WriteLine(ef.Message);
             }
-            GenerateEntities();
+           
         }
         //protected override void OnClosed(EventArgs e)
         //{
@@ -68,14 +67,19 @@ namespace GK_P4.RenderEngine
         {
             try
             {
-                //entity.IncreaseRotation(0,0.5f,0);
                 camera.Move();
                 foreach (var ent in entities)
                 {
+                    ent.IncreaseRotation(0, 0.5f, 0);
+                    //ent.IncreasePosition(0, 0, 0.2f);
                     renderer.ProcessEntity(ent);
                 }
+                foreach (var ter in terrains)
+                {
+                    renderer.ProcessTerrain(ter);
+                }
+                //terrain = new Terrain(0, 0, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png")));
                 renderer.Render(light, camera);
-
                 //renderer.Prepare();
                 //shader.Start();
                 //shader.LoadLight(light);
@@ -92,61 +96,57 @@ namespace GK_P4.RenderEngine
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
+            switch (e.Key)
+            {
+                case Key.C:
+                    {
+                        if(camera is StaticCamera)
+                            camera = new FollowingCamera(camera.Position,camera.Pitch,camera.Yaw,camera.Roll, entities[0]);
+                        else if (camera is FollowingCamera)
+                            camera = new GoProCamera(new Vector3(0, 0, 0), 30, 0, 0, keyboard, entities[0]);
+                        else
+                            camera = new StaticCamera(new Vector3(0, 40, 40), 40, 0, 0);
+                        break;
+                    }
+                case Key.S:
+                    {
+                        if (ShadingMode == "Flat")
+                            ShadingMode = "Phong";
+                        else if (ShadingMode == "Phong")
+                            ShadingMode = "Gouraud";
+                        else
+                            ShadingMode = "Flat";
+                        renderer.CleanUp();
+                        renderer = new MainRenderer(ShadingMode);
+                            break;
+                    }
+                case Key.E:
+                    {
+                        Close();
+                        break;
+                    }
+
+            }
+
             keyboard.KeyPressed(e, true);
         }
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             keyboard.KeyPressed(e, false);
         }
-        private void GenerateEntities()
+        private void generateEntities()
         {
-            // ETAP I
-
-            //float[] vertices =
-            //{
-            //    -0.5f, 0.5f, 0f,
-            //    -0.5f, -0.5f, 0f,
-            //    0.5f, -0.5f, 0f,
-            //    0.5f, 0.5f, 0f
-            //};
-            //int[] indices =
-            //{
-            //    0,1,3,
-            //    2,1,3
-
-            //};
-            //float[] textureCoords =
-            //{
-            //    0,0,
-            //    0,1,
-            //    1,1,
-            //    1,0
-            //};
-
-            //RawModel model = loader.LoadToVAO(vertices, textureCoords, indices);
-            //ModelTexture texture = new ModelTexture(loader.LoadTexture("Resources/john.png"));
-            //txtmodel = new TexturedModel(model, texture);
-            //entity = new Entity(txtmodel, new Vector3(0,0,-1),new Vector3(0,0,0),1);
-
-            //ETAP II
-
-            //RawModel model = OBJLoader.LoadOBJModel("stall",loader);
-            //TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.LoadTexture("Resources/stallTexture.png")));
-            //entity = new Entity(staticModel, new Vector3(0, -5, -40), new Vector3(0, 0, 0), 1);
-
-            //ETAP III smok
-           
             RawModel model = OBJLoader.LoadOBJModel("dragon", loader);
             TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.LoadTexture("Resources/white.png")));
             staticModel.Texture.reflectivity = 1;
             staticModel.Texture.shineDamper = 10;
-            entity = new Entity(staticModel, new Vector3(10, 0, -15), new Vector3(0, 0, 0), 1);
             
-            entities.Add(entity);
-            entity = new Entity(staticModel, new Vector3(0, 0, -15), new Vector3(0, 0, 0), 1);
-            entities.Add(entity);
-            entity = new Entity(staticModel, new Vector3(-10, 0, -15), new Vector3(0, 0, 0), 1);
-            entities.Add(entity);
+            entities.Add(new Entity(staticModel, new Vector3(10, 0, -15), new Vector3(0, 1f, 0), 1));
+           
+        }
+        private void generateTerrains()
+        {
+            terrains.Add(new Terrain(-0.25f, -0.25f, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png"))));
         }
         
     }

@@ -8,40 +8,39 @@ using System.Threading.Tasks;
 
 namespace GK_P4.Cameras
 {
-    public class Camera
+    public abstract class Camera
     {
         public Vector3 Position { get; set; }
         public float Pitch { get; set; }
         public float Yaw { get; set; }
         public float Roll { get; set; }
-        public KeyboardHandler Keyboard {get;}
+        public KeyboardHandler Keyboard { get; set; }
 
-        public Camera(Vector3 position, float pitch, float yaw, float roll, KeyboardHandler keyboard)
+        public Camera(Vector3 position, float pitch, float yaw, float roll)
         {
             this.Position = position;
             Pitch = pitch;
             Yaw = yaw;
             Roll = roll;
-            Keyboard = keyboard;
         }
 
-        public void Move()
+        public virtual void Move()
         {
             if (Keyboard.LeftPressed)
             {
-                Position += new Vector3(-0.3f, 0, 0);
+                Position += new Vector3(-5f, 0, 0);
             }
             if (Keyboard.UpPressed)
             {
-                Position += new Vector3(0, 0, -0.3f);
+                Position += new Vector3(0, 0, -5f);
             }
             if (Keyboard.RightPressed)
             {
-                Position += new Vector3(0.3f, 0, 0);
+                Position += new Vector3(5f, 0, 0);
             }
             if (Keyboard.DownPressed)
             {
-                Position += new Vector3(0, 0, 0.3f);
+                Position += new Vector3(0, 0, 5f);
             }
         }
     }
