@@ -61,6 +61,7 @@
     <Compile Include="Shaders\TerrainShader.cs" />
     <Compile Include="Terrains\Terrain.cs" />
     <Compile Include="UserInputHandlers\Keyboard.cs" />
+    <Compile Include="UserInputHandlers\MouseHandler.cs" />
     <Compile Include="Utilities\Loader.cs" />
     <Compile Include="Models\TexturedModel.cs" />
     <Compile Include="Textures\ModelTexture.cs" />

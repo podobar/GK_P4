@@ -18,23 +18,23 @@ using OpenTK.Input;
 
 namespace GK_P4.RenderEngine
 {
-    public class Game : GameWindow
+    public class Project : GameWindow
     {
         private Loader loader = new Loader();
         private MainRenderer renderer;
         private List<Terrain> terrains = new List<Terrain>();
         private Camera camera;
         private KeyboardHandler keyboard = new KeyboardHandler();
+        private MouseHandler mouse = new MouseHandler();
         private Light light = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
         private string ShadingMode = "Flat";
 
         List<Entity> entities = new List<Entity>();
-        public Game()
-            : base(
+        public Project(): base(
                  1024, 768,
                  new GraphicsMode(new ColorFormat(8, 8, 8, 8)),
                  "3D Trolley",
-                 GameWindowFlags.Default,
+                 GameWindowFlags.FixedWindow,
                  DisplayDevice.Default,
                  4,
                  0,
@@ -57,12 +57,12 @@ namespace GK_P4.RenderEngine
             }
            
         }
-        //protected override void OnClosed(EventArgs e)
-        //{
-        //    base.OnClosed(e);
-        //    renderer.CleanUp();
-        //    loader.CleanUp();
-        //}
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            renderer.CleanUp();
+            loader.CleanUp();
+        }
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             try
@@ -86,6 +86,7 @@ namespace GK_P4.RenderEngine
                 //shader.LoadViewMatrix(camera);
                 //renderer.Render(entity, shader);
                 //shader.Stop();
+                mouse.Reset();
                 SwapBuffers();
             }
             catch (Exception ex)
@@ -103,7 +104,7 @@ namespace GK_P4.RenderEngine
                         if(camera is StaticCamera)
                             camera = new FollowingCamera(camera.Position,camera.Pitch,camera.Yaw,camera.Roll, entities[0]);
                         else if (camera is FollowingCamera)
-                            camera = new GoProCamera(new Vector3(0, 0, 0), 30, 0, 0, keyboard, entities[0]);
+                            camera = new GoProCamera(new Vector3(0, 0, 0), 30, 0, 0, mouse, entities[0]);
                         else
                             camera = new StaticCamera(new Vector3(0, 40, 40), 40, 0, 0);
                         break;
@@ -133,6 +134,10 @@ namespace GK_P4.RenderEngine
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
             keyboard.KeyPressed(e, false);
+        }
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            mouse.Update(e);
         }
         private void generateEntities()
         {

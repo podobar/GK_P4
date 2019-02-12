@@ -12,7 +12,7 @@ namespace GK_P4
         {
             try
             {
-                new Game().Run(120);
+                new Project().Run(120);
             }
             catch (Exception exception)
             {

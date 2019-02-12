@@ -11,16 +11,18 @@ namespace GK_P4.Cameras
 {
     public class GoProCamera : Camera
     {
+        private const float MIN_DISTANCE = 20;
         public Entity Entity { get; set; }
-        private float distanceFromObject = 40;
-        private KeyboardHandler keyboard;
-        public GoProCamera(Vector3 position, float pitch, float yaw, float roll, KeyboardHandler keyboard, Entity entity) : base(position, pitch, yaw, roll)
+        private float distanceFromObject = MIN_DISTANCE;
+        private MouseHandler mouse;
+        public GoProCamera(Vector3 position, float pitch, float yaw, float roll, MouseHandler mouse, Entity entity) : base(position, pitch, yaw, roll)
         {
             Entity = entity;
-            this.keyboard = keyboard;
+            this.mouse = mouse;
         }
         public override void Move()
         {
+            calculateZoom();
             calculatePosition();
         }
         private void calculatePosition()
@@ -33,6 +35,12 @@ namespace GK_P4.Cameras
 
             Position = Entity.position + new Vector3(- X, Entity.position.Y + vDistance,- Z);
             Yaw = 180 - Entity.rotation.Y;
+        }
+        private void calculateZoom()
+        {
+            distanceFromObject = (distanceFromObject - mouse.WheelDelta > MIN_DISTANCE)
+                ? distanceFromObject - mouse.WheelDelta
+                : MIN_DISTANCE;
         }
     }
 }
