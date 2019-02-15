@@ -20,44 +20,53 @@ namespace GK_P4.RenderEngine
         public Matrix4 ProjectionMatrix { get; set; }
         private StaticShader shader;
         private EntityRenderer renderer;
-        
+        private EntityShader entityShader;
         private Dictionary<TexturedModel, List<Entity>> entities = new Dictionary<TexturedModel, List<Entity>>();
         private List<Terrain> terrains = new List<Terrain>();
         private TerrainRenderer terrainRenderer;
         private TerrainShader terrainShader = new TerrainShader();
         public MainRenderer(string shadingMode)
         {
+            GL.Enable(EnableCap.CullFace);
+            GL.CullFace(CullFaceMode.Back);
+            createProjectionMatrix();
+            terrainShader = new TerrainShader();
             if (shadingMode == "Flat")
             {
-
+                //zmień terrain i entity na te własnie
+               
+                entityShader = new EntityShader(shadingMode);
             }
             else if (shadingMode == "Phong")
             {
-
+                entityShader = new EntityShader(shadingMode);
             }
             else //Gouraud
             {
-
+                entityShader = new EntityShader(shadingMode);
             }
+            renderer = new EntityRenderer(entityShader, ProjectionMatrix);
+            terrainRenderer = new TerrainRenderer(terrainShader, ProjectionMatrix);
         }
         public MainRenderer()
         {
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
             createProjectionMatrix();
-            shader = new StaticShader();
-            renderer = new EntityRenderer(shader,ProjectionMatrix);
+            //shader = new StaticShader();
+            entityShader = new EntityShader("Flat");
+            renderer = new EntityRenderer(entityShader,ProjectionMatrix);
             terrainRenderer = new TerrainRenderer(terrainShader, ProjectionMatrix);
         }
         public void Render(Light sun, Camera camera)
         {
             Prepare();
-            shader.Start();
-            shader.LoadFogColour(R, G, B);
-            shader.LoadLight(sun);
-            shader.LoadViewMatrix(camera);
+            entityShader.Start();
+            entityShader.LoadFogColour(R, G, B);
+            entityShader.LoadLight(sun);
+            entityShader.LoadViewMatrix(camera);
             renderer.Render(entities);
-            shader.Stop();
+            entityShader.Stop();
             terrainShader.Start();
             terrainShader.LoadLight(sun);
             terrainShader.LoadViewMatrix(camera);
@@ -74,7 +83,7 @@ namespace GK_P4.RenderEngine
         }
         public void CleanUp()
         {
-            shader.CleanUp();
+            entityShader.CleanUp();
             terrainShader.CleanUp();
         }
         public void ProcessEntity(Entity entity)

@@ -26,7 +26,8 @@ namespace GK_P4.RenderEngine
         private Camera camera;
         private KeyboardHandler keyboard = new KeyboardHandler();
         private MouseHandler mouse = new MouseHandler();
-        private Light light = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
+        private Light sun = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
+        //private Light reflector = new Light(new Vector3(0,0,0))
         private string ShadingMode = "Flat";
 
         List<Entity> entities = new List<Entity>();
@@ -67,10 +68,12 @@ namespace GK_P4.RenderEngine
         {
             try
             {
+                updateReflector();
                 camera.Move();
                 foreach (var ent in entities)
                 {
                     ent.IncreaseRotation(0, 0.5f, 0);
+                    //ent.IncreasePosition(0.1f, 0, 0);
                     //ent.IncreasePosition(0, 0, 0.2f);
                     renderer.ProcessEntity(ent);
                 }
@@ -79,7 +82,7 @@ namespace GK_P4.RenderEngine
                     renderer.ProcessTerrain(ter);
                 }
                 //terrain = new Terrain(0, 0, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png")));
-                renderer.Render(light, camera);
+                renderer.Render(sun, camera);
                 //renderer.Prepare();
                 //shader.Start();
                 //shader.LoadLight(light);
@@ -128,7 +131,6 @@ namespace GK_P4.RenderEngine
                     }
 
             }
-
             keyboard.KeyPressed(e, true);
         }
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
@@ -141,17 +143,28 @@ namespace GK_P4.RenderEngine
         }
         private void generateEntities()
         {
-            RawModel model = OBJLoader.LoadOBJModel("dragon", loader);
-            TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.LoadTexture("Resources/white.png")));
-            staticModel.Texture.reflectivity = 1;
-            staticModel.Texture.shineDamper = 10;
+            //RawModel model = OBJLoader.LoadOBJModel("dragon", loader);
+            //TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.LoadTexture("Resources/white.png")));
+
+            //staticModel.Texture.reflectivity = 1;
+            //staticModel.Texture.shineDamper = 10;
             
-            entities.Add(new Entity(staticModel, new Vector3(10, 0, -15), new Vector3(0, 1f, 0), 1));
+            //entities.Add(new Entity(staticModel, new Vector3(10, 0, -15), new Vector3(0, 1f, 0), 1));
+            RawModel model2 = OBJLoader.LoadOBJModel("dragon", loader);
+            TexturedModel staticModel2 = new TexturedModel(model2, new ModelTexture(loader.LoadTexture("Resources/white.png")));
+            staticModel2.Texture.reflectivity = 1;
+            staticModel2.Texture.shineDamper = 10;
+            entities.Add(new Entity(staticModel2, new Vector3(0, 0, 0), new Vector3(0, 0.52f, 0), 2));
+
            
         }
         private void generateTerrains()
         {
             terrains.Add(new Terrain(-0.25f, -0.25f, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png"))));
+        }
+        private void updateReflector()
+        {
+
         }
         
     }
