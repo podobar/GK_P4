@@ -24,8 +24,8 @@ namespace GK_P4.RenderEngine
         private MainRenderer renderer;
         private List<Terrain> terrains = new List<Terrain>();
         private Camera camera;
-        private KeyboardHandler keyboard = new KeyboardHandler();
-        private MouseHandler mouse = new MouseHandler();
+        private KeyboardH keyboard = new KeyboardH();
+        private MouseH mouse = new MouseH();
         private Light sun = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
         //private Light reflector = new Light(new Vector3(0,0,0))
         private string ShadingMode = "Flat";
@@ -49,8 +49,8 @@ namespace GK_P4.RenderEngine
             {
                 generateEntities();
                 generateTerrains();
-                camera = new StaticCamera(new Vector3(0, 40, 40), 40, 0, 0);
-                renderer = new MainRenderer();
+                camera = new FollowingCamera(new Vector3(0, 5, 20), 0, 0, 0,entities[0]);
+                renderer = new MainRenderer("Flat");
             }
             catch(Exception ef)
             {
@@ -72,8 +72,8 @@ namespace GK_P4.RenderEngine
                 camera.Move();
                 foreach (var ent in entities)
                 {
-                    ent.IncreaseRotation(0, 0.5f, 0);
-                    //ent.IncreasePosition(0.1f, 0, 0);
+                    //ent.IncreaseRotation(0, 0.5f, 0);
+                    ent.IncreasePosition(0.1f, 0, 0);
                     //ent.IncreasePosition(0, 0, 0.2f);
                     renderer.ProcessEntity(ent);
                 }
@@ -104,12 +104,12 @@ namespace GK_P4.RenderEngine
             {
                 case Key.C:
                     {
-                        if(camera is StaticCamera)
-                            camera = new FollowingCamera(camera.Position,camera.Pitch,camera.Yaw,camera.Roll, entities[0]);
+                        if(camera is CCTVCamera)
+                            camera = new FollowingCamera(new Vector3(0, 50, 40),40,0,0, entities[0]);
                         else if (camera is FollowingCamera)
                             camera = new GoProCamera(new Vector3(0, 0, 0), 30, 0, 0, mouse, entities[0]);
                         else
-                            camera = new StaticCamera(new Vector3(0, 40, 40), 40, 0, 0);
+                            camera = new CCTVCamera(new Vector3(0, 50, 40), 40, 0, 0);
                         break;
                     }
                 case Key.S:

@@ -16,35 +16,24 @@ namespace GK_P4.RenderEngine
         private const float FOV = 70;
         private const float NEAR_PLANE = 0.1f;
         private const float FAR_PLANE = 1000;
-        private const float R = 0.5f, G = 0.5f, B = 0.5f;
+        private const float R = 0.5f, G = 0.3f, B = 0.5f;
         public Matrix4 ProjectionMatrix { get; set; }
-        private StaticShader shader;
         private EntityRenderer renderer;
         private EntityShader entityShader;
         private Dictionary<TexturedModel, List<Entity>> entities = new Dictionary<TexturedModel, List<Entity>>();
         private List<Terrain> terrains = new List<Terrain>();
         private TerrainRenderer terrainRenderer;
-        private TerrainShader terrainShader = new TerrainShader();
+        private TerrainShader terrainShader;
         public MainRenderer(string shadingMode)
         {
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
+            
+            terrainShader = new TerrainShader(shadingMode);
+            entityShader = new EntityShader(shadingMode);
+
             createProjectionMatrix();
-            terrainShader = new TerrainShader();
-            if (shadingMode == "Flat")
-            {
-                //zmień terrain i entity na te własnie
-               
-                entityShader = new EntityShader(shadingMode);
-            }
-            else if (shadingMode == "Phong")
-            {
-                entityShader = new EntityShader(shadingMode);
-            }
-            else //Gouraud
-            {
-                entityShader = new EntityShader(shadingMode);
-            }
+
             renderer = new EntityRenderer(entityShader, ProjectionMatrix);
             terrainRenderer = new TerrainRenderer(terrainShader, ProjectionMatrix);
         }
@@ -68,6 +57,7 @@ namespace GK_P4.RenderEngine
             renderer.Render(entities);
             entityShader.Stop();
             terrainShader.Start();
+            terrainShader.LoadFogColour(R, G, B);
             terrainShader.LoadLight(sun);
             terrainShader.LoadViewMatrix(camera);
             terrainRenderer.Render(terrains);

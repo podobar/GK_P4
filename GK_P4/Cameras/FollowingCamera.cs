@@ -18,7 +18,24 @@ namespace GK_P4.Cameras
         }
         public override void Move()
         {
+            calculatePitch();
+            calculateYaw();
+        }
+        private void calculatePitch()
+        {
+            //(y,z)
+            float dy = this.Position.Y - entity.position.Y;
+            float dz = this.Position.Z - entity.position.Z;
+            float d = (float)Math.Sqrt(dy * dy + dz * dz);
+            //Pitch = (float)MathHelper.RadiansToDegrees(Math.Asin(Math.Abs(dy) / d));
+        }
+        private void calculateYaw()
+        {
             
+            float dx = this.Position.X - entity.position.X;
+            float dz = this.Position.Z - entity.position.Z;
+            float d = (float)Math.Sqrt(dx * dx + dz * dz);
+            Yaw = -(float)MathHelper.RadiansToDegrees(Math.Asin(dx / d));
         }
     }
 }

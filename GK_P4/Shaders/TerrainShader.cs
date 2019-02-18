@@ -12,59 +12,20 @@ namespace GK_P4.Shaders
 {
     public class TerrainShader : ShaderProgram
     {
-        private const string vFile = "Shaders/terrainVertexShader.glsl";
-        private const string fFile = "Shaders/terrainFragmentShader.glsl";
-        private int location_transformationMatrix;
-        private int location_projectionMatrix;
-        private int location_viewMatrix;
-        private int location_lightPosition;
-        private int location_lightColour;
-        private int location_reflectivity;
-        private int location_shineDamper;
-        public TerrainShader() : base(vFile, fFile) { }
-
-        protected override void Initialize(string vShader, string fShader)
+       
+        public TerrainShader(string directoryPath)
         {
-            base.Initialize(vShader, fShader);
+            Initialize(
+                "Shaders/" + directoryPath + "/terrainVertexShader.glsl",
+                "Shaders/" + directoryPath + "/terrainFragmentShader.glsl");
         }
         protected override void bindAttributes()
         {
-            base.bindAttribute(0, "position");
-            base.bindAttribute(1, "textureCoords");
-            base.bindAttribute(2, "normal");
+            base.bindAttributes();
         }
         protected override void GetAllUniformLocations()
         {
-            location_transformationMatrix = base.getUniformLocation("transformationMatrix");
-            location_projectionMatrix = base.getUniformLocation("projectionMatrix");
-            location_viewMatrix = base.getUniformLocation("viewMatrix");
-            location_lightPosition = base.getUniformLocation("lightPosition");
-            location_lightColour = base.getUniformLocation("lightColour");
-            location_reflectivity = base.getUniformLocation("reflectivity");
-            location_shineDamper = base.getUniformLocation("shineDamper");
+            base.GetAllUniformLocations();
         }
-        public void LoadTransformationMatrix(Matrix4 matrix)
-        {
-            LoadMatrix(location_transformationMatrix, matrix);
-        }
-        public void LoadProjectionMatrix(Matrix4 matrix)
-        {
-            LoadMatrix(location_projectionMatrix, matrix);
-        }
-        public void LoadViewMatrix(Camera camera)
-        {
-            Matrix4 viewMatrix = Matrices.CreateViewMatrix(camera);
-            LoadMatrix(location_viewMatrix, viewMatrix);
-        }
-        public void LoadLight(Light light)
-        {
-            base.LoadVector(location_lightPosition, light.Position);
-            base.LoadVector(location_lightColour, light.Colour);
-        }
-        public void LoadShineVariables(float damper, float reflectivity)
-        {
-            base.LoadFloat(location_shineDamper, damper);
-            base.LoadFloat(location_reflectivity, reflectivity);
         }
     }
-}

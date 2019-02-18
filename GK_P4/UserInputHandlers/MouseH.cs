@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GK_P4.UserInputHandlers
 {
-    public class MouseHandler
+    public class MouseH
     {
         public float WheelDelta { get; set; }
         public void Update(MouseWheelEventArgs e)

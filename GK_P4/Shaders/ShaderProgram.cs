@@ -2,6 +2,9 @@
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.IO;
+using GK_P4.Cameras;
+using GK_P4.Utilities;
+using GK_P4.Lights;
 
 namespace GK_P4.Shaders
 {
@@ -10,18 +13,16 @@ namespace GK_P4.Shaders
         private int programID;
         private int vertexShaderID;
         private int fragmentShaderID;
-        public ShaderProgram(string vFile, string fFile)
-        {
-            vertexShaderID = loadShader(vFile, ShaderType.VertexShader);
-            fragmentShaderID = loadShader(fFile, ShaderType.FragmentShader);
-            programID = GL.CreateProgram();
-            GL.AttachShader(programID, vertexShaderID);
-            GL.AttachShader(programID, fragmentShaderID);
-            bindAttributes();
-            GL.LinkProgram(programID);
-            GL.ValidateProgram(programID);
-            GetAllUniformLocations();
-        }
+
+        private int location_transformationMatrix;
+        private int location_projectionMatrix;
+        private int location_viewMatrix;
+        private int location_lightPosition;
+        private int location_lightColour;
+        private int location_reflectivity;
+        private int location_shineDamper;
+        private int location_fogColour;
+
         public void Start()
         {
             GL.UseProgram(programID);
@@ -40,22 +41,28 @@ namespace GK_P4.Shaders
             GL.DeleteShader(fragmentShaderID);
             GL.DeleteProgram(programID);
         }
-        protected abstract void bindAttributes();
+        protected virtual void bindAttributes()
+        {
+            bindAttribute(0, "position");
+            bindAttribute(1, "textureCoords");
+            bindAttribute(2, "normal");
+        }
         protected void bindAttribute(int attribute, string variableName)
         {
             GL.BindAttribLocation(programID, attribute, variableName);
         }
-        
+
         protected virtual void Initialize(string vShader, string fShader)
         {
             vertexShaderID = loadShader(vShader, ShaderType.VertexShader);
             fragmentShaderID = loadShader(fShader, ShaderType.FragmentShader);
-
             programID = GL.CreateProgram();
             GL.AttachShader(programID, vertexShaderID);
             GL.AttachShader(programID, fragmentShaderID);
+            bindAttributes();
             GL.LinkProgram(programID);
             GL.ValidateProgram(programID);
+            GetAllUniformLocations();
         }
         private static int loadShader(string file, ShaderType type)
         {
@@ -77,7 +84,17 @@ namespace GK_P4.Shaders
         {
             return GL.GetUniformLocation(programID, uniName);
         }
-        protected abstract void GetAllUniformLocations();
+        protected virtual void GetAllUniformLocations()
+        {
+            location_transformationMatrix = getUniformLocation("transformationMatrix");
+            location_projectionMatrix = getUniformLocation("projectionMatrix");
+            location_viewMatrix = getUniformLocation("viewMatrix");
+            location_lightPosition = getUniformLocation("lightPosition");
+            location_lightColour = getUniformLocation("lightColour");
+            location_reflectivity = getUniformLocation("reflectivity");
+            location_shineDamper = getUniformLocation("shineDamper");
+            location_fogColour = getUniformLocation("fogColour");
+        }
         protected void LoadFloat(int location, float value)
         {
             GL.Uniform1(location, value);
@@ -107,6 +124,33 @@ namespace GK_P4.Shaders
         protected void LoadMatrix(int location, Matrix4 matrix)
         {
             GL.UniformMatrix4(location, false, ref matrix);
+        }
+        public void LoadFogColour(float r, float g, float b)
+        {
+            LoadVector(location_fogColour, new Vector3(r, g, b));
+        }
+        public void LoadTransformationMatrix(Matrix4 matrix)
+        {
+            LoadMatrix(location_transformationMatrix, matrix);
+        }
+        public void LoadProjectionMatrix(Matrix4 matrix)
+        {
+            LoadMatrix(location_projectionMatrix, matrix);
+        }
+        public void LoadViewMatrix(Camera camera)
+        {
+            Matrix4 viewMatrix = Matrices.CreateViewMatrix(camera);
+            LoadMatrix(location_viewMatrix, viewMatrix);
+        }
+        public void LoadLight(Light light)
+        {
+            LoadVector(location_lightPosition, light.Position);
+            LoadVector(location_lightColour, light.Colour);
+        }
+        public void LoadShineVariables(float damper, float reflectivity)
+        {
+            LoadFloat(location_shineDamper, damper);
+            LoadFloat(location_reflectivity, reflectivity);
         }
         #endregion
     }

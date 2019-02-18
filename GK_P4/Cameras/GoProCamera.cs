@@ -14,8 +14,8 @@ namespace GK_P4.Cameras
         private const float MIN_DISTANCE = 20;
         public Entity Entity { get; set; }
         private float distanceFromObject = MIN_DISTANCE;
-        private MouseHandler mouse;
-        public GoProCamera(Vector3 position, float pitch, float yaw, float roll, MouseHandler mouse, Entity entity) : base(position, pitch, yaw, roll)
+        private MouseH mouse;
+        public GoProCamera(Vector3 position, float pitch, float yaw, float roll, MouseH mouse, Entity entity) : base(position, pitch, yaw, roll)
         {
             Entity = entity;
             this.mouse = mouse;

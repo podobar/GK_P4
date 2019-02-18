@@ -14,7 +14,7 @@ namespace GK_P4.Cameras
         public float Pitch { get; set; }
         public float Yaw { get; set; }
         public float Roll { get; set; }
-        public KeyboardHandler Keyboard { get; set; }
+        public KeyboardH Keyboard { get; set; }
 
         public Camera(Vector3 position, float pitch, float yaw, float roll)
         {
@@ -24,24 +24,6 @@ namespace GK_P4.Cameras
             Roll = roll;
         }
 
-        public virtual void Move()
-        {
-            if (Keyboard.LeftPressed)
-            {
-                Position += new Vector3(-5f, 0, 0);
-            }
-            if (Keyboard.UpPressed)
-            {
-                Position += new Vector3(0, 0, -5f);
-            }
-            if (Keyboard.RightPressed)
-            {
-                Position += new Vector3(5f, 0, 0);
-            }
-            if (Keyboard.DownPressed)
-            {
-                Position += new Vector3(0, 0, 5f);
-            }
-        }
+        public abstract void Move();
     }
 }

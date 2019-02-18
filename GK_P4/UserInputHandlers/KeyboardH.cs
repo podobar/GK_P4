@@ -7,7 +7,7 @@ using OpenTK.Input;
 
 namespace GK_P4.UserInputHandlers
 {
-    public class KeyboardHandler
+    public class KeyboardH
     {
         public bool UpPressed { get; set; }
         public bool DownPressed { get; set; }

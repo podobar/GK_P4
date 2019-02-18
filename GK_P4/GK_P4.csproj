@@ -52,19 +52,20 @@
     <Compile Include="Cameras\Camera.cs" />
     <Compile Include="Cameras\FollowingCamera.cs" />
     <Compile Include="Cameras\GoProCamera.cs" />
-    <Compile Include="Cameras\StaticCamera.cs" />
+    <Compile Include="Cameras\CCTVCamera.cs" />
     <Compile Include="Entities\Entity.cs" />
+    <Compile Include="Lights\DirectionalLight.cs" />
     <Compile Include="Lights\Light.cs" />
     <Compile Include="RenderEngine\MainRenderer.cs" />
     <Compile Include="RenderEngine\TerrainRenderer.cs" />
     <Compile Include="Shaders\EntityShader.cs" />
     <Compile Include="Shaders\TerrainShader.cs" />
-    <Compile Include="Terrains\Terrain.cs" />
-    <Compile Include="UserInputHandlers\Keyboard.cs" />
-    <Compile Include="UserInputHandlers\MouseHandler.cs" />
+    <Compile Include="Models\Terrain.cs" />
+    <Compile Include="UserInputHandlers\KeyboardH.cs" />
+    <Compile Include="UserInputHandlers\MouseH.cs" />
     <Compile Include="Utilities\Loader.cs" />
     <Compile Include="Models\TexturedModel.cs" />
-    <Compile Include="Textures\ModelTexture.cs" />
+    <Compile Include="Models\ModelTexture.cs" />
     <Compile Include="Models\RawModel.cs" />
     <Compile Include="Models\Texture.cs" />
     <Compile Include="Program.cs" />
@@ -72,7 +73,6 @@
     <Compile Include="RenderEngine\DisplayManager.cs" />
     <Compile Include="RenderEngine\EntityRenderer.cs" />
     <Compile Include="Shaders\ShaderProgram.cs" />
-    <Compile Include="Shaders\StaticShader.cs" />
     <Compile Include="Utilities\Matrices.cs" />
     <Compile Include="Utilities\OBJLoader.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -123,9 +123,6 @@
     <None Include="Shaders\Flat\vertexShader.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Shaders\fragmentShader.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Shaders\Gouraud\fragmentShader.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -148,15 +145,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Shaders\Phong\vertexShader.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\terrainFragmentShader.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\terrainVertexShader.glsl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Shaders\vertexShader.glsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

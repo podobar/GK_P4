@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace GK_P4.Cameras
 {
-    class StaticCamera : Camera
+    class CCTVCamera : Camera
     {
-        public StaticCamera(Vector3 position, float pitch, float yaw, float roll) : base(position,pitch,yaw,roll)
+        public CCTVCamera(Vector3 position, float pitch, float yaw, float roll) : base(position,pitch,yaw,roll)
         {
         }
         public override void Move()

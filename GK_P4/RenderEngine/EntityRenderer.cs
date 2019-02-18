@@ -14,9 +14,9 @@ namespace GK_P4.RenderEngine
     public class EntityRenderer
     {
         
-        private StaticShader shader;
+        private ShaderProgram shader;
 
-        public EntityRenderer(StaticShader shader, Matrix4 projectionMatrix)
+        public EntityRenderer(ShaderProgram shader, Matrix4 projectionMatrix)
         {
             this.shader = shader;
             shader.Start();
