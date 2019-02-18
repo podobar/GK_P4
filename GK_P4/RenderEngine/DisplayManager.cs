@@ -49,7 +49,7 @@ namespace GK_P4.RenderEngine
             {
                 generateEntities();
                 generateTerrains();
-                camera = new FollowingCamera(new Vector3(0, 5, 20), 0, 0, 0,entities[0]);
+                camera = new FollowingCamera(new Vector3(15, 20, 30), 0, 0, 0,entities[0]);
                 renderer = new MainRenderer("Flat");
             }
             catch(Exception ef)
@@ -73,7 +73,7 @@ namespace GK_P4.RenderEngine
                 foreach (var ent in entities)
                 {
                     //ent.IncreaseRotation(0, 0.5f, 0);
-                    ent.IncreasePosition(0.1f, 0, 0);
+                    ent.IncreasePosition(0.1f, 0.1f, 0f);
                     //ent.IncreasePosition(0, 0, 0.2f);
                     renderer.ProcessEntity(ent);
                 }
