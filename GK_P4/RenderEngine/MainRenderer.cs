@@ -42,10 +42,10 @@ namespace GK_P4.RenderEngine
             GL.Enable(EnableCap.CullFace);
             GL.CullFace(CullFaceMode.Back);
             createProjectionMatrix();
-            //shader = new StaticShader();
             entityShader = new EntityShader("Flat");
             renderer = new EntityRenderer(entityShader,ProjectionMatrix);
             terrainRenderer = new TerrainRenderer(terrainShader, ProjectionMatrix);
+            terrainShader = new TerrainShader("Flat");
         }
         public void Render(Light sun, Camera camera)
         {
@@ -59,6 +59,24 @@ namespace GK_P4.RenderEngine
             terrainShader.Start();
             terrainShader.LoadFogColour(R, G, B);
             terrainShader.LoadLight(sun);
+            terrainShader.LoadViewMatrix(camera);
+            terrainRenderer.Render(terrains);
+            terrainShader.Stop();
+            terrains.Clear();
+            entities.Clear();
+        }
+        public void Render(List<Light> lights, Camera camera)
+        {
+            Prepare();
+            entityShader.Start();
+            entityShader.LoadFogColour(R, G, B);
+            entityShader.LoadLights(lights);
+            entityShader.LoadViewMatrix(camera);
+            renderer.Render(entities);
+            entityShader.Stop();
+            terrainShader.Start();
+            terrainShader.LoadFogColour(R, G, B);
+            terrainShader.LoadLights(lights);
             terrainShader.LoadViewMatrix(camera);
             terrainRenderer.Render(terrains);
             terrainShader.Stop();

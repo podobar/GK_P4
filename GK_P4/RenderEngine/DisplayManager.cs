@@ -22,15 +22,31 @@ namespace GK_P4.RenderEngine
     {
         private Loader loader = new Loader();
         private MainRenderer renderer;
-        private List<Terrain> terrains = new List<Terrain>();
+       
         private Camera camera;
         private KeyboardH keyboard = new KeyboardH();
         private MouseH mouse = new MouseH();
-        private Light sun = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
+        //private Light sun = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
         //private Light reflector = new Light(new Vector3(0,0,0))
         private string ShadingMode = "Flat";
-
-        List<Entity> entities = new List<Entity>();
+        private List<Light> lights = new List<Light>()
+        {
+            new Light(
+                new Vector3(10000,1,20),
+                //new Vector3(212f/255f, 175f/255f, 55f/255f), 
+                 new Vector3(1f, 1f, 1f),
+                new Vector3(0.0001f,0,0),
+                new Vector3(0,1,0), 
+                90),
+            new Light(
+                new Vector3(0,50,20),
+                new Vector3(0.5f,0.75f,0.5f), 
+                new Vector3(0,0,0),
+                new Vector3(0,-1,0), 
+                30)
+        };
+        private List<Entity> entities = new List<Entity>();
+        private List<Terrain> terrains = new List<Terrain>();
         public Project(): base(
                  1024, 768,
                  new GraphicsMode(new ColorFormat(8, 8, 8, 8)),
@@ -72,8 +88,8 @@ namespace GK_P4.RenderEngine
                 camera.Move();
                 foreach (var ent in entities)
                 {
-                    //ent.IncreaseRotation(0, 0.5f, 0);
-                    ent.IncreasePosition(0.1f, 0.1f, 0f);
+                    ent.IncreaseRotation(0, 0.5f, 0);
+                    ent.IncreasePosition(0f, 0f, 0f);
                     //ent.IncreasePosition(0, 0, 0.2f);
                     renderer.ProcessEntity(ent);
                 }
@@ -82,7 +98,7 @@ namespace GK_P4.RenderEngine
                     renderer.ProcessTerrain(ter);
                 }
                 //terrain = new Terrain(0, 0, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png")));
-                renderer.Render(sun, camera);
+                renderer.Render(lights, camera);
                 //renderer.Prepare();
                 //shader.Start();
                 //shader.LoadLight(light);
@@ -122,7 +138,7 @@ namespace GK_P4.RenderEngine
                             ShadingMode = "Flat";
                         renderer.CleanUp();
                         renderer = new MainRenderer(ShadingMode);
-                            break;
+                        break;
                     }
                 case Key.E:
                     {
@@ -143,20 +159,12 @@ namespace GK_P4.RenderEngine
         }
         private void generateEntities()
         {
-            //RawModel model = OBJLoader.LoadOBJModel("dragon", loader);
-            //TexturedModel staticModel = new TexturedModel(model, new ModelTexture(loader.LoadTexture("Resources/white.png")));
-
-            //staticModel.Texture.reflectivity = 1;
-            //staticModel.Texture.shineDamper = 10;
-            
-            //entities.Add(new Entity(staticModel, new Vector3(10, 0, -15), new Vector3(0, 1f, 0), 1));
             RawModel model2 = OBJLoader.LoadOBJModel("dragon", loader);
             TexturedModel staticModel2 = new TexturedModel(model2, new ModelTexture(loader.LoadTexture("Resources/white.png")));
             staticModel2.Texture.reflectivity = 1;
             staticModel2.Texture.shineDamper = 10;
             entities.Add(new Entity(staticModel2, new Vector3(0, 0, 0), new Vector3(0, 0.52f, 0), 2));
 
-           
         }
         private void generateTerrains()
         {

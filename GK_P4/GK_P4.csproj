@@ -54,7 +54,6 @@
     <Compile Include="Cameras\GoProCamera.cs" />
     <Compile Include="Cameras\CCTVCamera.cs" />
     <Compile Include="Entities\Entity.cs" />
-    <Compile Include="Lights\DirectionalLight.cs" />
     <Compile Include="Lights\Light.cs" />
     <Compile Include="RenderEngine\MainRenderer.cs" />
     <Compile Include="RenderEngine\TerrainRenderer.cs" />
