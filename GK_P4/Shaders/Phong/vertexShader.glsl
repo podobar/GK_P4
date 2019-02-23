@@ -1,5 +1,5 @@
 ﻿#version 450 core
-#define LIGHTS_COUNT 2
+#define LIGHT_COUNT 2
 
 in vec3 position;
 in vec2 textureCoords;
@@ -7,10 +7,11 @@ in vec3 normal;
 
 out vec2 ret_textureCoords;
 out vec3 surfaceNormal;
-out vec3 toLightVector;
+out vec3 toLightVectors[LIGHT_COUNT];
 out vec3 toCameraVector;
 out float visibility;
 
+uniform vec3 lightPositions[LIGHT_COUNT];
 uniform mat4 transformationMatrix;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -27,7 +28,10 @@ void main(void){
 	ret_textureCoords=textureCoords;
 
 	surfaceNormal = (transformationMatrix * vec4(normal,0.0)).xyz;
-	toLightVector = lightPosition - worldPosition.xyz;
+	for ( int i = 0; i < LIGHT_COUNT; ++i)
+	{
+		toLightVectors[i] = lightPositions[i] - worldPosition.xyz;
+	}
 	toCameraVector = (inverse(viewMatrix) * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
 
 	float distance = length(positionRelativeToCamera.xyz);

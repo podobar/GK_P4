@@ -29,6 +29,12 @@ namespace GK_P4.RenderEngine
         //private Light sun = new Light(new Vector3(0, 100, 20), new Vector3(212f/255f, 175f/255f, 55f/255f));
         //private Light reflector = new Light(new Vector3(0,0,0))
         private string ShadingMode = "Flat";
+        private Light reflector = new Light(
+                new Vector3(0, 50, 20),
+                new Vector3(0.5f, 0.75f, 0.5f),
+                new Vector3(0, 0.0025f, 0),
+                new Vector3(0, -1, 0),
+                30);
         private List<Light> lights = new List<Light>()
         {
             new Light(
@@ -38,12 +44,6 @@ namespace GK_P4.RenderEngine
                 new Vector3(0.0001f,0,0),
                 new Vector3(0,1,0), 
                 90),
-            new Light(
-                new Vector3(0,50,20),
-                new Vector3(0.5f,0.75f,0.5f), 
-                new Vector3(0,0,0),
-                new Vector3(0,-1,0), 
-                30)
         };
         private List<Entity> entities = new List<Entity>();
         private List<Terrain> terrains = new List<Terrain>();
@@ -67,6 +67,7 @@ namespace GK_P4.RenderEngine
                 generateTerrains();
                 camera = new FollowingCamera(new Vector3(15, 20, 30), 0, 0, 0,entities[0]);
                 renderer = new MainRenderer("Flat");
+                lights.Add(reflector);
             }
             catch(Exception ef)
             {
@@ -84,11 +85,11 @@ namespace GK_P4.RenderEngine
         {
             try
             {
-                updateReflector();
+                updateSpotlight();
                 camera.Move();
                 foreach (var ent in entities)
                 {
-                    ent.IncreaseRotation(0, 0.5f, 0);
+                    ent.IncreaseRotation(0, 0f, 0);
                     ent.IncreasePosition(0f, 0f, 0f);
                     //ent.IncreasePosition(0, 0, 0.2f);
                     renderer.ProcessEntity(ent);
@@ -170,9 +171,29 @@ namespace GK_P4.RenderEngine
         {
             terrains.Add(new Terrain(-0.25f, -0.25f, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png"))));
         }
-        private void updateReflector()
+        private void updateSpotlight()
         {
+            float amplitude = 15f;
+            float delta = 1f;
 
+            //update position
+            reflector.Position = entities[0].position + new Vector3(0, 20, 0);
+            //update direction
+            if (keyboard.A_Pressed)
+            {
+                reflector.RelativeAngle = reflector.RelativeAngle - delta < -amplitude
+                    ? -amplitude
+                    : reflector.RelativeAngle - delta;
+            }
+            if (keyboard.D_Pressed)
+            {
+                reflector.RelativeAngle = reflector.RelativeAngle + delta > amplitude
+                       ? amplitude
+                       : reflector.RelativeAngle + delta;
+
+            }
+            var m1 = Matrix3.CreateRotationY(MathHelper.DegreesToRadians(-entities[0].rotation.Y + reflector.RelativeAngle));
+            reflector.ConeOfLightDirection = m1 * new Vector3(20,0.01f,-1);
         }
         
     }
