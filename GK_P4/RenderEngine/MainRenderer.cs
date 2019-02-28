@@ -17,6 +17,7 @@ namespace GK_P4.RenderEngine
         private const float NEAR_PLANE = 0.1f;
         private const float FAR_PLANE = 1000;
         private const float R = 0.5f, G = 0.3f, B = 0.5f;
+        private const float WIDTH = 1024, HEIGHT = 768;
         public Matrix4 ProjectionMatrix { get; set; }
         private EntityRenderer renderer;
         private EntityShader entityShader;
@@ -46,24 +47,6 @@ namespace GK_P4.RenderEngine
             renderer = new EntityRenderer(entityShader,ProjectionMatrix);
             terrainRenderer = new TerrainRenderer(terrainShader, ProjectionMatrix);
             terrainShader = new TerrainShader("Flat");
-        }
-        public void Render(Light sun, Camera camera)
-        {
-            Prepare();
-            entityShader.Start();
-            entityShader.LoadFogColour(R, G, B);
-            entityShader.LoadLight(sun);
-            entityShader.LoadViewMatrix(camera);
-            renderer.Render(entities);
-            entityShader.Stop();
-            terrainShader.Start();
-            terrainShader.LoadFogColour(R, G, B);
-            terrainShader.LoadLight(sun);
-            terrainShader.LoadViewMatrix(camera);
-            terrainRenderer.Render(terrains);
-            terrainShader.Stop();
-            terrains.Clear();
-            entities.Clear();
         }
         public void Render(List<Light> lights, Camera camera)
         {
@@ -109,18 +92,17 @@ namespace GK_P4.RenderEngine
         }
         private void createProjectionMatrix()
         {
-            float aspectRatio = (float)1024 / (float)768f;
+            float aspectRatio = WIDTH / HEIGHT;
             float y_scale = (float)(1f / Math.Tan(MathHelper.DegreesToRadians(FOV / 2f)) * aspectRatio);
             float x_scale = y_scale / aspectRatio;
-            float frustum_lenght = FAR_PLANE - NEAR_PLANE;
 
             ProjectionMatrix = new Matrix4
             {
                 M11 = x_scale,
                 M22 = y_scale,
-                M33 = -((FAR_PLANE + NEAR_PLANE) / frustum_lenght),
+                M33 = -((FAR_PLANE + NEAR_PLANE) / FAR_PLANE - NEAR_PLANE),
                 M34 = -1,
-                M43 = -(2 * NEAR_PLANE * FAR_PLANE / frustum_lenght),
+                M43 = -(2 * NEAR_PLANE * FAR_PLANE / FAR_PLANE - NEAR_PLANE),
                 M44 = 0
             };
         }

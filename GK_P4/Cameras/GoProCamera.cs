@@ -11,7 +11,7 @@ namespace GK_P4.Cameras
 {
     public class GoProCamera : Camera
     {
-        private const float MIN_DISTANCE = 20;
+        private const float MIN_DISTANCE = 30;
         public Entity Entity { get; set; }
         private float distanceFromObject = MIN_DISTANCE;
         private MouseH mouse;
@@ -33,7 +33,7 @@ namespace GK_P4.Cameras
             float X = (float)(hDistance * Math.Sin(MathHelper.DegreesToRadians(Entity.rotation.Y)));
             float Z = (float)(hDistance * Math.Cos(MathHelper.DegreesToRadians(Entity.rotation.Y)));
 
-            Position = Entity.position + new Vector3(- X, Entity.position.Y + vDistance,- Z);
+            Position = Entity.position + new Vector3(- X, vDistance, - Z);
             Yaw = 180 - Entity.rotation.Y;
         }
         private void calculateZoom()

@@ -19,8 +19,6 @@ namespace GK_P4.Shaders
         private int location_transformationMatrix;
         private int location_projectionMatrix;
         private int location_viewMatrix;
-        private int location_lightPosition;
-        private int location_lightColour;
         private int location_reflectivity;
         private int location_shineDamper;
         private int location_fogColour;
@@ -96,8 +94,6 @@ namespace GK_P4.Shaders
             location_transformationMatrix = getUniformLocation("transformationMatrix");
             location_projectionMatrix = getUniformLocation("projectionMatrix");
             location_viewMatrix = getUniformLocation("viewMatrix");
-            location_lightPosition = getUniformLocation("lightPosition");
-            location_lightColour = getUniformLocation("lightColour");
             location_reflectivity = getUniformLocation("reflectivity");
             location_shineDamper = getUniformLocation("shineDamper");
             location_fogColour = getUniformLocation("fogColour");
@@ -123,11 +119,6 @@ namespace GK_P4.Shaders
             GL.Uniform1(location, value);
         }
 
-        protected void LoadInt(int location, int value)
-        {
-            GL.Uniform1(location, value);
-        }
-
         protected void LoadVector(int location, Vector3 vector)
         {
             GL.Uniform3(location, vector);
@@ -137,17 +128,11 @@ namespace GK_P4.Shaders
         {
             GL.Uniform2(location, vector);
         }
-
-        protected void LoadBoolean(int location, bool value)
-        {
-            float toLoad = value == true ? 1 : 0;
-            GL.Uniform1(location, toLoad);
-        }
-
         protected void LoadMatrix(int location, Matrix4 matrix)
         {
             GL.UniformMatrix4(location, false, ref matrix);
         }
+
         public void LoadFogColour(float r, float g, float b)
         {
             LoadVector(location_fogColour, new Vector3(r, g, b));
@@ -165,11 +150,6 @@ namespace GK_P4.Shaders
             Matrix4 viewMatrix = Matrices.CreateViewMatrix(camera);
             LoadMatrix(location_viewMatrix, viewMatrix);
         }
-        public void LoadLight(Light light)
-        {
-            LoadVector(location_lightPosition, light.Position);
-            LoadVector(location_lightColour, light.Colour);
-        }
         public void LoadLights(List<Light> lights)
         {
             for (int i = 0; i < LIGHT_COUNT; ++i)
@@ -180,7 +160,6 @@ namespace GK_P4.Shaders
                 LoadVector(location_attenuations[i], lights[i].Attenuation);
                 LoadVector(location_coneOfLightDirections[i], lights[i].ConeOfLightDirection);
             }
-               
         }
         public void LoadShineVariables(float damper, float reflectivity)
         {
