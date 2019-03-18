@@ -27,5 +27,9 @@ namespace GK_P4.Lights
             ConeOfLightDirection = coneDirection;
             ConeOfLightAngle = coneAngle;
         }
+        public void IncreasePosition(float dx, float dy, float dz)
+        {
+            Position = Position + new Vector3(dx, dy, dz);
+        }
     }
 }

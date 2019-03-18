@@ -11,7 +11,7 @@ namespace GK_P4.Shaders
 {
     public abstract class ShaderProgram
     {
-        private const int LIGHT_COUNT = 2;
+        private const int LIGHT_COUNT = 4;
         private int programID;
         private int vertexShaderID;
         private int fragmentShaderID;

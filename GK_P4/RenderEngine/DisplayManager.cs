@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,28 +26,44 @@ namespace GK_P4.RenderEngine
         private Camera camera;
         private KeyboardH keyboard = new KeyboardH();
         private MouseH mouse = new MouseH();
-        private string ShadingMode = "Flat";
+        
         private Entity trolley;
-        private Light reflector = new Light(
-                new Vector3(0, 10, 0),
-                new Vector3(0.5f, 0.75f, 0.5f),
-                new Vector3(0, 0.0025f, 0),
-                new Vector3(0, -1, 0),
-                30);
+        private Light reflector;
         
         private List<Light> lights = new List<Light>()
         {
             new Light(
-                new Vector3(10000,1,20),
+                new Vector3(100,1,20),
                 new Vector3(1f, 1f, 1f),
                 new Vector3(0.0001f,0,0),
                 new Vector3(0,1,0), 
                 90),
-        };
+            new Light(
+                new Vector3(0, 10, 0),
+                new Vector3(0.5f, 0.75f, 0.5f),
+                new Vector3(0, 0.0025f, 0),
+                new Vector3(0, -1, 0),
+                30),
+             new Light(
+                new Vector3(0,100,0),
+                new Vector3(139/255f, 0f, 0f),
+                new Vector3(0f,0,0),
+                new Vector3(0,-1,0),
+                30),
+            new Light(
+                new Vector3(0, 10, 0),
+                new Vector3(0.5f, 0.75f, 0.5f),
+                new Vector3(0, 0.0025f, 0),
+                new Vector3(0, -1, 0),
+                30)
+    };
         private List<Entity> entities = new List<Entity>();
         private List<Terrain> terrains = new List<Terrain>();
-
-        private float amplitude = 15f;
+        private Stopwatch stopwatch = new Stopwatch();
+        private const double bunnyRadius = 5;
+        private const float amplitude = 10f;
+        private const float delta = 0.3f;
+        private string ShadingMode = "Flat";
         public Project(): base(
                  1024, 768,
                  new GraphicsMode(new ColorFormat(8, 8, 8, 8)),
@@ -67,7 +84,8 @@ namespace GK_P4.RenderEngine
                 generateTerrains();
                 camera = new FollowingCamera(new Vector3(15, 20, 30), 0, 0, 0,trolley);
                 renderer = new MainRenderer("Flat");
-                lights.Add(reflector);
+                reflector = lights[1];
+                stopwatch.Start();
             }
             catch(Exception ef)
             {
@@ -85,12 +103,13 @@ namespace GK_P4.RenderEngine
         {
             try
             {
-                updateTrolleyPosition();
-                updateSpotlight();
+                updateLights();
+                updateTrolley();
+                updateBunnies();
                 camera.Move();
                 foreach (var ent in entities)
                 {
-                    ent.IncreaseRotation(0.1f, 0.2f, 0);
+                    ent.IncreaseRotation(0f, 0f, 0);
                     ent.IncreasePosition(0f, 0f, 0f);
                     renderer.ProcessEntity(ent);
                 }
@@ -115,14 +134,14 @@ namespace GK_P4.RenderEngine
                 case Key.C:
                     {
                         if(camera is CCTVCamera)
-                            camera = new FollowingCamera(new Vector3(0, 50, 40),40,0,0, trolley);
+                            camera = new FollowingCamera(new Vector3(0, 50, 40), 40, 0, 0, trolley);
                         else if (camera is FollowingCamera)
-                            camera = new GoProCamera(new Vector3(0, 0, 0), 30, 0, 0, mouse, trolley);
+                            camera = new GoProCamera(new Vector3(0, 0, 0), 70, 0, 0, mouse, trolley);
                         else
                             camera = new CCTVCamera(new Vector3(0, 50, 40), 40, 0, 0);
                         break;
                     }
-                case Key.S:
+                case Key.M:
                     {
                         if (ShadingMode == "Flat")
                             ShadingMode = "Phong";
@@ -153,25 +172,35 @@ namespace GK_P4.RenderEngine
         }
         private void generateEntities()
         {
-            RawModel model2 = OBJLoader.LoadOBJModel("sphere", loader);
+            RawModel model2 = OBJLoader.LoadOBJModel("dragon", loader);
             TexturedModel staticModel2 = new TexturedModel(model2, new ModelTexture(loader.LoadTexture("Resources/white.png")));
             staticModel2.Texture.reflectivity = 1;
             staticModel2.Texture.shineDamper = 10;
-            trolley = new Entity(staticModel2, new Vector3(0, 5, 0), new Vector3(0, 0.52f, 0), 3);
+            trolley = new Entity(staticModel2, new Vector3(0, 5, 0), new Vector3(0, 0, 0), 3);
             entities.Add(trolley);
 
+            RawModel bunnyModel = OBJLoader.LoadOBJModel("bunny", loader);
+            TexturedModel staticModel = new TexturedModel(bunnyModel, new ModelTexture(loader.LoadTexture("Resources/green.png")));
+            staticModel.Texture.reflectivity = 0.5f;
+            staticModel.Texture.shineDamper =7;
+
+            for(int i = -5; i < 5; i+=2)
+                for(int j = -5; j < 5; j+=2)
+                {
+                    entities.Add(new Entity(staticModel, new Vector3(10*i, 5, 10*j), new Vector3(0, 0, 0), 0.5f));
+                }
         }
         private void generateTerrains()
         {
             terrains.Add(new Terrain(-0.5f, -0.5f, loader, new ModelTexture(loader.LoadTexture("Resources/grass.png"))));
         }
-        private void updateSpotlight()
+        private void updateLights()
         {
             const float amplitude = 15f;
             float delta = 1f;
 
             //update position
-            reflector.Position = trolley.position + new Vector3(0, -5, 0);
+            reflector.Position = trolley.position + new Vector3(0, 5, 0);
             //update direction
             if (keyboard.A_Pressed)
             {
@@ -185,13 +214,11 @@ namespace GK_P4.RenderEngine
                        ? amplitude
                        : reflector.RelativeAngle + delta;
             }
-            reflector.ConeOfLightDirection = Matrix3.CreateRotationY(MathHelper.DegreesToRadians(reflector.RelativeAngle)) * new Vector3(1f, 0, 0);
+            reflector.ConeOfLightDirection = Matrix3.CreateRotationY(MathHelper.DegreesToRadians(reflector.RelativeAngle)) * new Vector3(-1f, 0.10f, 0);
         }
-        private void updateTrolleyPosition()
+        private void updateTrolley()
         {
-            //add wind effect
-            const float delta = 0.3f;
-            if (keyboard.X_Pressed)
+            if (keyboard.S_Pressed)
             {
                 if (trolley.position.X + delta > amplitude)
                     trolley.position.X = amplitude;
@@ -210,6 +237,29 @@ namespace GK_P4.RenderEngine
                 {
                     trolley.position.X -= delta;
                     trolley.position.Y -= delta;
+                }
+            }
+        }
+        private void updateBunnies()
+        {
+            var elapsedTime = stopwatch.Elapsed.Seconds;
+            for(int i = 1; i <= 25; ++i)
+            {
+                if (i % 2 == 0)
+                {
+                    if (elapsedTime % 2 == 0)
+                        entities[i].IncreasePosition(0.1f, 0, 0.1f);
+                    else
+                        entities[i].IncreasePosition(-0.1f, 0, - 0.1f);
+                    entities[i].IncreaseRotation(0, 0.5f, 0);
+                }
+                else
+                {
+                    if (elapsedTime % 2 == 0)
+                        entities[i].IncreasePosition(0.3f, 0, 0.2f);
+                    else
+                        entities[i].IncreasePosition(-0.3f, 0, -0.2f);
+                    entities[i].IncreaseRotation(-0.4f, 0.1f, 0);
                 }
             }
         }

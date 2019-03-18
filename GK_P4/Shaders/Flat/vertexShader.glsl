@@ -1,5 +1,5 @@
 ﻿#version 450 core
-#define LIGHT_COUNT 2
+#define LIGHT_COUNT 4
 
 in vec3 position;
 in vec2 textureCoords;
