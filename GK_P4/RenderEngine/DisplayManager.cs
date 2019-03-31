@@ -60,8 +60,10 @@ namespace GK_P4.RenderEngine
         private List<Entity> entities = new List<Entity>();
         private List<Terrain> terrains = new List<Terrain>();
         private Stopwatch stopwatch = new Stopwatch();
+        private long previousMilis = 0;
+        private float theta = 0;
         private const double bunnyRadius = 5;
-        private const float amplitude = 10f;
+        private const float amplitude = 7.5f;
         private const float delta = 0.3f;
         private string ShadingMode = "Flat";
         public Project(): base(
@@ -153,6 +155,42 @@ namespace GK_P4.RenderEngine
                         renderer = new MainRenderer(ShadingMode);
                         break;
                     }
+                case Key.KeypadPlus:
+                    {
+                        foreach(var light in lights)
+                        {
+                            float dx =0, dy=0, dz=0;
+                            if (light.Attenuation.X <= 0.99)
+                                dx = 0.001f;
+                            if (light.Attenuation.Y <= 0.99)
+                                dy = 0.001f;
+                            if (light.Attenuation.Z <= 0.99)
+                                dz = 0.001f;
+                            light.Attenuation = light.Attenuation + new Vector3(dx, dy, dz);
+
+                        }
+                        break;
+                    }
+                case Key.KeypadMinus:
+                    {
+                        foreach (var light in lights)
+                        {
+                            float dx = 0, dy = 0, dz = 0;
+                            if (light.Attenuation.X > 0)
+                                dx = 0.001f;
+                            if (light.Attenuation.Y > 0)
+                                dy = 0.001f;
+                            if (light.Attenuation.Z > 0)
+                                dz = 0.001f;
+                            light.Attenuation = light.Attenuation - new Vector3(dx, dy, dz);
+
+                        }
+                        break;
+                    }
+                case Key.N:
+                    {
+                        break;
+                    }
                 case Key.E:
                     {
                         Close();
@@ -196,9 +234,6 @@ namespace GK_P4.RenderEngine
         }
         private void updateLights()
         {
-            const float amplitude = 15f;
-            float delta = 1f;
-
             //update position
             reflector.Position = trolley.position + new Vector3(0, 5, 0);
             //update direction
@@ -215,6 +250,20 @@ namespace GK_P4.RenderEngine
                        : reflector.RelativeAngle + delta;
             }
             reflector.ConeOfLightDirection = Matrix3.CreateRotationY(MathHelper.DegreesToRadians(reflector.RelativeAngle)) * new Vector3(-1f, 0.10f, 0);
+            for(int i = 2; i <= 3; ++i)
+            {
+                if(stopwatch.ElapsedMilliseconds-previousMilis > 30)
+                {
+                    theta += 0.025f;
+                    float sin = (float)(Math.Sin(theta));
+                    float cos = (float)(Math.Cos(theta));
+                    lights[2].Position = new Vector3(20*sin, 50, 20*cos);
+                    lights[3].Position = new Vector3((-25 * sin), 150f, -25 * cos);
+                    lights[2].ConeOfLightDirection = new Vector3(sin, -1, cos);
+                    previousMilis = stopwatch.ElapsedMilliseconds;
+                }
+                    
+            }
         }
         private void updateTrolley()
         {

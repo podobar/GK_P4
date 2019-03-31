@@ -16,17 +16,6 @@ namespace GK_P4.Cameras
         }
         public override void Move()
         {
-            //calculateDirection();
         }
-        //private void calculateDirection()
-        //{
-        //    float dx = this.Position.X - entity.position.X;
-        //    float dy = this.Position.Y - entity.position.Y;
-        //    float dz = this.Position.Z - entity.position.Z;
-
-        //    float distance = (float)Math.Sqrt(Math.Pow(dy, 2) + Math.Sqrt(Math.Pow(dx, 2) + Math.Pow(dz, 2)));
-        //    Pitch = (float)Math.Asin(dx / distance);
-        //    //only Yaw And Pitch may change!
-        //}
     }
 }

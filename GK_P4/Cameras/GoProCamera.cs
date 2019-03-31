@@ -27,13 +27,7 @@ namespace GK_P4.Cameras
         }
         private void calculatePosition()
         {
-            //float hDistance = (float)(distanceFromObject * Math.Cos(MathHelper.DegreesToRadians(Pitch)));
             float vDistance = (float)(distanceFromObject * Math.Sin(MathHelper.DegreesToRadians(Pitch)));
-
-            //float X = (float)(hDistance * Math.Sin(MathHelper.DegreesToRadians(Entity.rotation.Y)));
-            //float Z = (float)(hDistance * Math.Cos(MathHelper.DegreesToRadians(Entity.rotation.Y)));
-
-            //-X -Z
             Position = Entity.position + new Vector3(0, vDistance,  0);
             Yaw = -90 - Entity.rotation.Y;
         }

@@ -12,13 +12,6 @@ namespace GK_P4.Models
         public ModelTexture Texture { get;  }
 
         public float Height { get; }
-
-        //public TexturedModel(RawModel model, float height, ModelTexture texture)
-        //{
-        //    RawModel = model;
-        //    Texture = texture;
-        //    Height = height;
-        //}
         public TexturedModel(RawModel model, ModelTexture texture)
         {
             Model = model;

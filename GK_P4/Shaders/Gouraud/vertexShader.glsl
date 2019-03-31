@@ -25,8 +25,8 @@ const float density = 0.007;
 const float gradient = 1.5;
 
 void main(void){
-	vec3 specularSum = vec3(0.0,0.0,0.0);
-	vec3 diffuseSum = vec3(0.0,0.0,0.0);
+	specularSum = vec3(0.0,0.0,0.0);
+	diffuseSum = vec3(0.0,0.0,0.0);
 	vec4 worldPosition = transformationMatrix * vec4(position, 1.0);
 	vec4 positionRelativeToCamera = viewMatrix*worldPosition;
 	gl_Position = projectionMatrix * positionRelativeToCamera;
