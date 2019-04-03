@@ -84,7 +84,7 @@ namespace GK_P4.RenderEngine
             {
                 generateEntities();
                 generateTerrains();
-                camera = new FollowingCamera(new Vector3(15, 20, 30), 0, 0, 0,trolley);
+                camera = new FollowingCamera(new Vector3(0, 50, 40), 40, 0, 0, trolley);
                 renderer = new MainRenderer("Flat");
                 reflector = lights[1];
                 stopwatch.Start();
